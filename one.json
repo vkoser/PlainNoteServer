@@ -1,0 +1,66 @@
+<?
+//**********
+/*
+return all notes
+GET /notes/all.json
+
+{string} username the username
+{string} account_id the account UUID, retrieved with /account/login
+{
+  [
+   {
+     "post_id":<post UUID string>,
+       "last_modified":"1994-11-05T13:15:30Z", // iso8601 UTC date
+       "content":"some text"
+       },
+   {
+     "post_id":<post UUID string>,
+       "last_modified":"2004-11-05T13:15:30Z",
+       "content":"some other text"
+       }
+   ]
+    }
+
+*/
+//***********
+
+// require local conf
+require "plainnoteconf.php";
+require "sqltojson.php";
+
+// require the inspekt library  
+require "Inspekt/Inspekt.php"; 
+
+// create a "SuperCage" to wrap all possible user input  
+// the SuperCage should be created before doing *anything* else  
+$input = Inspekt::makeSuperCage();  
+  
+//ensure the user sent a user and pass
+$username = $input->get->testEmail('username');
+$account_id = $input->get->getRaw('account_id');
+$post_id = $input->get->getRaw('post_id');
+
+if (!$username || !$account_id || !$post_id) {  
+  //bad user/account_id
+  echo json_encode(array ('error'=>'malformed request'));
+} 
+else {  
+
+  mysql_connect($dbHost,$dbUser,$dbPass);
+  @mysql_select_db($dbName) or die( "Unable to select database");
+  
+  $query="SELECT lastmodified as last_modified ,note as content, noteguid as post_id from notes as n 
+          inner join users as u on u.userpk=n.userpk 
+          where deleted<>1 and guid='$account_id' and noteguid='$post_id'";
+
+  $result=mysql_query($query);
+
+  echo sqltojson($result);
+
+  }
+  mysql_close();  
+
+
+//all done  
+
+?>
