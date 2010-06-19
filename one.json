@@ -1,28 +1,4 @@
 <?
-//**********
-/*
-return all notes
-GET /notes/all.json
-
-{string} username the username
-{string} account_id the account UUID, retrieved with /account/login
-{
-  [
-   {
-     "post_id":<post UUID string>,
-       "last_modified":"1994-11-05T13:15:30Z", // iso8601 UTC date
-       "content":"some text"
-       },
-   {
-     "post_id":<post UUID string>,
-       "last_modified":"2004-11-05T13:15:30Z",
-       "content":"some other text"
-       }
-   ]
-    }
-
-*/
-//***********
 
 // require local conf
 require "plainnoteconf.php";
