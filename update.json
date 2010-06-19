@@ -1,0 +1,58 @@
+<?
+//***********
+
+// require local conf
+require "plainnoteconf.php";
+require "sqltojson.php";
+
+// require the inspekt library  
+require "Inspekt/Inspekt.php"; 
+
+// create a "SuperCage" to wrap all possible user input  
+// the SuperCage should be created before doing *anything* else  
+$input = Inspekt::makeSuperCage();  
+  
+//ensure the user sent a user and pass
+$username = $input->get->testEmail('username');
+$account_id = $input->get->getRaw('account_id');
+$post_id = $input->get->getRaw('post_id');
+$note = $input->get->getRaw('content');
+
+if (!$username || !$account_id || !$post_id || !$note) {  
+  //bad user/account_id
+  echo json_encode(array ('status'=>400, 'error'=>'malformed request'));
+} 
+else {  
+
+  mysql_connect($dbHost,$dbUser,$dbPass);
+  @mysql_select_db($dbName) or die( "Unable to select database");
+
+  //first things first get the userpk
+  $query="SELECT userpk,username,password,guid FROM users where username='$username' and guid='$account_id'";
+  $result=mysql_query($query);
+
+  $num=mysql_numrows($result);
+
+  if($num>0){  
+    //found the user lets load some values
+    $d_userpk=mysql_result($result,$i,"userpk");
+    $d_username=mysql_result($result,$i,"username");
+    $d_password=mysql_result($result,$i,"password");
+    $d_guid=mysql_result($result,$i,"guid");
+  }
+  else{
+    echo json_encode(array ('status'=>400, 'error'=>'malformed request'));
+  }
+
+
+  //need to stup in code here to select form notes, then insert or update if found
+
+
+
+ }
+mysql_close();  
+
+
+//all done  
+
+?>
