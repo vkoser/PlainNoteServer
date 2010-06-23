@@ -16,10 +16,9 @@ $input = Inspekt::makeSuperCage();
 $username = $input->get->testEmail('username');
 $account_id = $input->get->getRaw('account_id');
 $post_id = $input->get->getRaw('post_id');
-$note = $input->get->getRaw('content');
 
-if (!$username || !$account_id || !$post_id || !$note) {  
-  //bad user/account_id
+if (!$username || !$account_id || !$post_id) {  
+  //bad user/account_id or missing param
   echo json_encode(array ('status'=>400, 'error'=>'malformed request'));
 } 
 else {  
@@ -44,17 +43,7 @@ else {
     echo json_encode(array ('status'=>400, 'error'=>'user not found'));
   }
 
-
-  //need to stup in code here to select form notes, then insert or update if found
-  //hey @funkatron told me about on duplicate key update so we don't have to do a select then insert or update
-  //huzzah
-
-  //INSERT INTO table (a,b,c) VALUES (1,2,3)
-  //  ON DUPLICATE KEY UPDATE c=c+1;
-
-  $sql = "insert into notes (lastmodified,userpk,note,noteguid) values ".
-    "(now(),$d_userpk,'$note','$post_id') ".
-    "ON DUPLICATE KEY UPDATE note='$note'";
+  $sql = "DELETE FROM notes WHERE noteguid='$post_id'";
 
   mysql_query($sql);
 
@@ -63,7 +52,7 @@ else {
     echo json_encode(array ('status'=>201, 'error'=>'success'));
      }
   else{
-    echo json_encode(array ('status'=>400, 'error'=>'note not updated or created'));
+    echo json_encode(array ('status'=>400, 'error'=>'note not deleted possibly did not exist?'));
   }  
 
   mysql_close();  
