@@ -13,9 +13,9 @@ require "Inspekt/Inspekt.php";
 $input = Inspekt::makeSuperCage();  
   
 //ensure the user sent a user and pass
-$username = $input->get->testEmail('username');
-$account_id = $input->get->getRaw('account_id');
-$post_id = $input->get->getRaw('post_id');
+$username = $input->post->testEmail('username');
+$account_id = $input->post->getRaw('account_id');
+$post_id = $input->post->getRaw('post_id');
 
 if (!$username || !$account_id || !$post_id) {  
   //bad user/account_id or missing param

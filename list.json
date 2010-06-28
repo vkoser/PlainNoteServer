@@ -13,8 +13,8 @@ require "Inspekt/Inspekt.php";
 $input = Inspekt::makeSuperCage();  
   
 //ensure the user sent a user and pass
-$username = $input->get->testEmail('username');
-$account_id = $input->get->getRaw('account_id');
+$username = $input->post->testEmail('username');
+$account_id = $input->post->getRaw('account_id');
 
 if (!$username && !$account_id) {  
   //bad user/account_id
@@ -25,7 +25,7 @@ else {
   mysql_connect($dbHost,$dbUser,$dbPass);
   @mysql_select_db($dbName) or die( "Unable to select database");
   
-  $query="SELECT lastmodified as last_modified ,SUBSTR(note,128) as content, noteguid as post_id from notes as n 
+  $query="SELECT lastmodified as last_modified ,SUBSTR(note,1,128) as content, noteguid as post_id from notes as n 
           inner join users as u on u.userpk=n.userpk 
           where deleted<>1 and guid='$account_id'";
 

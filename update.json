@@ -13,10 +13,10 @@ require "Inspekt/Inspekt.php";
 $input = Inspekt::makeSuperCage();  
   
 //ensure the user sent a user and pass
-$username = $input->get->testEmail('username');
-$account_id = $input->get->getRaw('account_id');
-$post_id = $input->get->getRaw('post_id');
-$note = $input->get->getRaw('content');
+$username = $input->post->testEmail('username');
+$account_id = $input->post->getRaw('account_id');
+$post_id = $input->post->getRaw('post_id');
+$note = $input->post->getRaw('content');
 
 if (!$username || !$account_id || !$post_id || !$note) {  
   //bad user/account_id
@@ -27,6 +27,7 @@ else {
   mysql_connect($dbHost,$dbUser,$dbPass);
   @mysql_select_db($dbName) or die( "Unable to select database");
 
+  $note = $input->post->escMySQL('content');  
   //first things first get the userpk
   $query="SELECT userpk,username,password,guid FROM users where username='$username' and guid='$account_id'";
   $result=mysql_query($query);
@@ -63,7 +64,7 @@ else {
     echo json_encode(array ('status'=>201, 'error'=>'success'));
      }
   else{
-    echo json_encode(array ('status'=>400, 'error'=>'note not updated or created'));
+    echo json_encode(array ('status'=>400, 'error'=>'note not updated or created', 'sql'=>$sql));
   }  
 
   mysql_close();  

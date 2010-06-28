@@ -14,8 +14,8 @@ require "guid.php";
 $input = Inspekt::makeSuperCage();  
   
 //ensure the user sent a user and pass
-$username = $input->get->testEmail('username');
-$password = $input->get->getRaw('password');
+$username = $input->post->testEmail('username');
+$password = $input->post->getRaw('password');
 
 if (!$username && !$password) {  
   //bad user/pass ->eventually return json response for bad data here
@@ -54,7 +54,7 @@ else {
     
     $query = "INSERT INTO users (username,password,guid) VALUES ('$username','$password','$n_guid')";
     mysql_query($query);
-    echo json_encode(array ('authenticated'=>'true','account_id'=>'$n_guid','created'=>'true'));
+    echo json_encode(array ('authenticated'=>'true','account_id'=>'$n_guid','created'=>'true','sql'=>$query));
   }
   mysql_close();  
 }
